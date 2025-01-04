@@ -1,0 +1,14 @@
+import requests
+from requests.auth import HTTPBasicAuth
+from bs4 import BeautifulSoup
+from bs4 import Comment
+
+url = 'http://natas1.natas.labs.overthewire.org/'
+password = '0nzCigAq7t2iALyvU9xcHlYN4MlkIwlq' # change to actual password
+
+r = requests.get(url=url, auth=HTTPBasicAuth('natas1', password=password))
+
+soup = BeautifulSoup(r.text, 'html.parser')
+comment = soup.find_all(string=lambda text: isinstance(text,Comment))
+
+print(f'natas2:{comment[1].split()[5]}')
