@@ -1,1 +1,1 @@
-Solve for natas levels for OverTheWire
+Solves for web-challenges (natas) to  OverTheWire
