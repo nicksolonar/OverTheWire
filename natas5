@@ -1,0 +1,16 @@
+import requests
+from requests.auth import HTTPBasicAuth
+from bs4 import BeautifulSoup
+
+url = 'http://natas5.natas.labs.overthewire.org/'
+password = '0n35PkggAPm2zbEpOU802c0x0Msn1ToK' # change to actual password
+
+#when i logged site give me a 'loggedin'='0' cookie, change this and make req again
+cookies = {'loggedin':'1'}
+
+r = requests.get(url=url, auth=HTTPBasicAuth('natas5', password=password), cookies=cookies)
+
+soup = BeautifulSoup(r.text, 'html.parser')
+pas = soup.find('div').text.split()[7]
+
+print(f'natas6:{pas}')
