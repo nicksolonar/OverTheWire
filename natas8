@@ -1,0 +1,31 @@
+from base64 import decode, b64decode
+
+import requests
+from requests.auth import HTTPBasicAuth
+from bs4 import BeautifulSoup
+import base64
+
+url = 'http://natas8.natas.labs.overthewire.org/'
+password = 'xcoXLmzMkoIP9D7hlgPlh9XD7OgLAe5Q' # change to actual password
+
+#$encodedSecret = "3d3d516343746d4d6d6c315669563362";
+#function encodeSecret($secret) {
+#    $encodedSecret = bin2hex(strrev(base64_encode($secret)));
+#    return $encodedSecret;
+#}
+
+#-----------get secret------------
+encodedSecret = "3d3d516343746d4d6d6c315669563362"
+secret = int(bin(int(encodedSecret,16))[2:], 2) #hex2bin
+secret = secret.to_bytes((secret.bit_length()+7) // 8, byteorder='big')
+secret = secret[::-1] # reverse
+secret = b64decode(secret)  # base64decode
+secret = secret.decode('UTF-8')
+
+#-----------send secret----------
+data = {'secret': secret, 'submit':'submit'}
+r = requests.post(url=url, auth=HTTPBasicAuth('natas8', password=password), data=data)
+
+soup = BeautifulSoup(r.text, 'html.parser')
+pas = soup.find('div').text.split()[7]
+print(f'natas9:{pas}')
